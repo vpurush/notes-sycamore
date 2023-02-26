@@ -1,0 +1,18 @@
+[package]
+name = "notes-sycamore"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sycamore = "0.8"
+sycamore-router = "0.8"
+sycamore-futures = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.4"
+wasm-bindgen = "0.2.74"
+js-sys = "0.3.61"
+wasm-bindgen-futures = "0.4.34"
+console_error_panic_hook = "0.1.7"
+futures = "0.3.26"
