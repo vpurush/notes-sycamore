@@ -51,13 +51,18 @@ var ddoc = {
               let notebook = next[item._id] || {};
               notebook = {
                 ...notebook,
-                ...item
+                ...item,
+                notebook_id: item._id,
+                notes: []
               };
               next[item._id] = notebook;
             } else if (item.doc_type === "note") {
               const notebook = next[item.notebook_id] || {};
               const notes = notebook.notes || [];
-              notes.push(item);
+              notes.push({
+                ...item,
+                note_id: item._id
+              });
               notebook.notes = notes;
 
               next[item.notebook_id] = notebook;
@@ -90,13 +95,13 @@ db.get("_design/notes_and_notebooks").then(res => {
 
 // db.remove("_design/notebooks");
 
-db.query('notes_and_notebooks/all', {
-  // include_docs: true
-}).then(function (res) {
-  console.log("notebooks from view", res);
-}).catch(function (err) {
-  console.log("error while fetching notebooks from view", err);
-});
+// db.query('notes_and_notebooks/all', {
+//   // include_docs: true
+// }).then(function (res) {
+//   console.log("notebooks from view", res);
+// }).catch(function (err) {
+//   console.log("error while fetching notebooks from view", err);
+// });
 
 db.on('error', function (err) { console.log("error", err); });
 
@@ -113,19 +118,37 @@ export const getAllNotebooks = () => {
   //     }
   // ];
 
-  return new Promise((resolve, reject) => {
-    resolve([
-      {
-        notebook_id: "one",
-        name: "One",
-        notes: [{
-          note_id: "one",
-          content: "Content",
-          tags: ["tagone"],
-        }],
-      }
-    ])
+  // return new Promise((resolve, reject) => {
+  //   // resolve([
+  //   //   {
+  //   //     notebook_id: "one",
+  //   //     name: "One",
+  //   //     notes: [{
+  //   //       note_id: "one",
+  //   //       content: "Content",
+  //   //       tags: ["tagone"],
+  //   //     }],
+  //   //   }
+  //   // ])
+
+  // });
+
+  return db.query('notes_and_notebooks/all', {
+    // include_docs: true
+  }).then(function (res) {
+    console.log("notebooks from view", res);
+    if (res && res.rows) {
+      const reducedValue = res.rows.flatMap(row => {
+        return Object.values(row.value);
+      });
+      console.log("reducedValue", reducedValue);
+      return reducedValue;
+    }
+    return [];
+  }).catch(function (err) {
+    console.log("error while fetching notebooks from view", err);
   });
+
 }
 
 export const getTemp = () => {
